@@ -11,7 +11,7 @@ export default function Login() {
   const handleLogin = async () => {
     setError("");
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -19,8 +19,28 @@ export default function Login() {
     if (error) {
       setError(error.message);
     } else {
-      localStorage.setItem("loggedIn", "true");
-      navigate("/home");
+      const user = data.user;
+
+      // 🔍 Получаем роль из таблицы profiles
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        setError("Не удалось получить роль пользователя");
+        return;
+      }
+
+      // 💼 Переход в зависимости от роли
+      if (profile.role === "store") {
+        navigate("/store-dashboard");
+      } else if (profile.role === "supplier") {
+        navigate("/supplier-dashboard");
+      } else {
+        setError("Неизвестная роль");
+      }
     }
   };
 

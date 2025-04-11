@@ -1,109 +1,98 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
+import { useState } from 'react';
+import { supabase } from '../supabaseClient'; // путь может отличаться
+import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("supplier");
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleRegister = async () => {
-    setError("");
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-    const { data, error } = await supabase.auth.signUp({
+    if (!role) {
+      setError('Пожалуйста, выберите роль');
+      return;
+    }
+
+    // 1. Регистрируем пользователя
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          role,
-          name,
-        },
-      },
     });
 
-    if (error) {
-      setError(error.message);
-    } else {
-      localStorage.setItem("loggedIn", "true");
-      navigate("/home");
+    if (signUpError) {
+      setError(signUpError.message);
+      return;
+    }
+
+    // 2. После регистрации — добавляем профиль с ролью
+    const user = signUpData?.user;
+
+    if (user) {
+      const { error: insertError } = await supabase.from('profiles').insert([
+        {
+          id: user.id,
+          email: user.email,
+          role: role,
+        },
+      ]);
+
+      if (insertError) {
+        setError('Ошибка при сохранении профиля: ' + insertError.message);
+        return;
+      }
+
+      // ✅ Успешно — переходим дальше
+      navigate('/home'); // или /supplier-dashboard, /store-dashboard
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-        <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">Регистрация</h2>
+    <div className="max-w-md mx-auto mt-10 p-4 border rounded-xl shadow">
+      <h2 className="text-xl font-bold mb-4">Регистрация</h2>
 
-        {error && (
-          <div className="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm text-center">
-            {error}
-          </div>
-        )}
+      {error && <div className="text-red-500 mb-2">{error}</div>}
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Название магазина / поставщика</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Введите название"
-            />
-          </div>
+      <form onSubmit={handleRegister} className="flex flex-col gap-3">
+        <input
+          type="email"
+          placeholder="Email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border px-3 py-2 rounded"
+        />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="example@email.com"
-            />
-          </div>
+        <input
+          type="password"
+          placeholder="Пароль"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border px-3 py-2 rounded"
+        />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Пароль</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="••••••••"
-            />
-          </div>
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          required
+          className="border px-3 py-2 rounded"
+        >
+          <option value="">Выберите роль</option>
+          <option value="store">Магазин</option>
+          <option value="supplier">Поставщик</option>
+        </select>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Выберите роль</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="supplier">Поставщик</option>
-              <option value="store">Магазин</option>
-            </select>
-          </div>
-
-          <button
-            onClick={handleRegister}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl transition duration-300"
-          >
-            Зарегистрироваться
-          </button>
-        </div>
-
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Уже есть аккаунт?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Войти
-          </a>
-        </p>
-      </div>
+        <button
+          type="submit"
+          className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
+        >
+          Зарегистрироваться
+        </button>
+      </form>
     </div>
   );
 }

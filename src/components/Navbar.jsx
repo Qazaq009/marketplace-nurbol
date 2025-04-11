@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
@@ -15,24 +15,45 @@ export default function Navbar() {
     navigate("/main");
   };
 
+  const navLinkClass = ({ isActive }) =>
+    isActive
+      ? "text-blue-700 font-semibold underline"
+      : "hover:text-blue-600 transition";
+
   return (
     <nav className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-white/80 border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-        <Link to="/main" className="text-2xl font-bold text-blue-700">
+        <NavLink to="/main" className="text-2xl font-bold text-blue-700">
           Marketplace
-        </Link>
+        </NavLink>
 
         <div className="flex gap-4 items-center text-gray-700">
-          <Link to="/main" className="hover:text-blue-600 transition">Главная</Link>
+          <NavLink to="/main" className={navLinkClass}>
+            Главная
+          </NavLink>
+
           {isLoggedIn && (
             <>
-              <Link to="/home" className="hover:text-blue-600 transition">Личный кабинет</Link>
-              <Link to="/products" className="hover:text-blue-600 transition">Товары</Link>
+              <NavLink to="/home" className={navLinkClass}>
+                Личный кабинет
+              </NavLink>
+              <NavLink to="/products" className={navLinkClass}>
+                Товары
+              </NavLink>
+              <NavLink to="/supplier-dashboard" className={navLinkClass}>
+                Поставщик
+              </NavLink>
             </>
           )}
-          <Link to="/register" className="hover:text-blue-600 transition">Регистрация</Link>
+
+          <NavLink to="/register" className={navLinkClass}>
+            Регистрация
+          </NavLink>
+
           {!isLoggedIn ? (
-            <Link to="/login" className="hover:text-blue-600 transition">Войти</Link>
+            <NavLink to="/login" className={navLinkClass}>
+              Войти
+            </NavLink>
           ) : (
             <button
               onClick={handleLogout}
