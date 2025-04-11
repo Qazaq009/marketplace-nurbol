@@ -6,6 +6,7 @@ export default function Register() {
   const [storeName, setStoreName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ export default function Register() {
 
     if (!role) {
       setError('Пожалуйста, выберите роль');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Пароли не совпадают');
       return;
     }
 
@@ -81,6 +87,15 @@ export default function Register() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="border px-3 py-2 rounded"
+          />
+
+          <input
+            type="password"
+            placeholder="Подтвердите пароль"
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="border px-3 py-2 rounded"
           />
 
