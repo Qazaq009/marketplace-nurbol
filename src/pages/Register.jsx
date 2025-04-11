@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { supabase } from '../supabaseClient'; // путь может отличаться
+import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
+  const [storeName, setStoreName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
@@ -17,7 +18,6 @@ export default function Register() {
       return;
     }
 
-    // 1. Регистрируем пользователя
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -28,7 +28,6 @@ export default function Register() {
       return;
     }
 
-    // 2. После регистрации — добавляем профиль с ролью
     const user = signUpData?.user;
 
     if (user) {
@@ -37,6 +36,7 @@ export default function Register() {
           id: user.id,
           email: user.email,
           role: role,
+          store_name: storeName, // 🔥 добавлено
         },
       ]);
 
@@ -45,18 +45,27 @@ export default function Register() {
         return;
       }
 
-      // ✅ Успешно — переходим дальше
-      navigate('/home'); // или /supplier-dashboard, /store-dashboard
+      // Редирект по роли
+      navigate(role === 'supplier' ? '/supplier-dashboard' : '/dashboard');
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded-xl shadow">
-      <h2 className="text-xl font-bold mb-4">Регистрация</h2>
+    <div className="max-w-md mx-auto mt-10 p-4 border rounded-xl shadow bg-white">
+      <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">Регистрация</h2>
 
-      {error && <div className="text-red-500 mb-2">{error}</div>}
+      {error && <div className="text-red-500 mb-3 text-center">{error}</div>}
 
       <form onSubmit={handleRegister} className="flex flex-col gap-3">
+        <input
+          type="text"
+          placeholder="Название магазина / поставщика"
+          value={storeName}
+          onChange={(e) => setStoreName(e.target.value)}
+          className="border px-3 py-2 rounded"
+          required
+        />
+
         <input
           type="email"
           placeholder="Email"
@@ -88,11 +97,15 @@ export default function Register() {
 
         <button
           type="submit"
-          className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
+          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
           Зарегистрироваться
         </button>
       </form>
+
+      <p className="mt-4 text-sm text-center">
+        Уже есть аккаунт? <a href="/login" className="text-blue-600 underline">Войти</a>
+      </p>
     </div>
   );
 }
