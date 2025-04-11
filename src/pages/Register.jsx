@@ -36,7 +36,7 @@ export default function Register() {
           id: user.id,
           email: user.email,
           role: role,
-          store_name: storeName, // 🔥 добавлено
+          store_name: storeName,
         },
       ]);
 
@@ -45,67 +45,71 @@ export default function Register() {
         return;
       }
 
-      // Редирект по роли
       navigate(role === 'supplier' ? '/supplier-dashboard' : '/dashboard');
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-40 p-4 border rounded-xl shadow bg-white">
-      <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">Регистрация</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="max-w-md w-full bg-white shadow-md p-6 rounded-xl">
+        <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">Регистрация</h2>
 
-      {error && <div className="text-red-500 mb-3 text-center">{error}</div>}
+        {error && <div className="text-red-500 mb-3 text-center">{error}</div>}
 
-      <form onSubmit={handleRegister} className="flex flex-col gap-3">
-        <input
-          type="text"
-          placeholder="Название магазина / поставщика"
-          value={storeName}
-          onChange={(e) => setStoreName(e.target.value)}
-          className="border px-3 py-2 rounded"
-          required
-        />
+        <form onSubmit={handleRegister} className="flex flex-col gap-3">
+          <input
+            type="text"
+            placeholder="Название магазина / поставщика"
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
+            className="border px-3 py-2 rounded"
+            required
+          />
 
-        <input
-          type="email"
-          placeholder="Email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border px-3 py-2 rounded"
-        />
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border px-3 py-2 rounded"
+          />
 
-        <input
-          type="password"
-          placeholder="Пароль"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border px-3 py-2 rounded"
-        />
+          <input
+            type="password"
+            placeholder="Пароль"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border px-3 py-2 rounded"
+          />
 
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          required
-          className="border px-3 py-2 rounded"
-        >
-          <option value="">Выберите роль</option>
-          <option value="store">Магазин</option>
-          <option value="supplier">Поставщик</option>
-        </select>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+            className="border px-3 py-2 rounded"
+          >
+            <option value="">Выберите роль</option>
+            <option value="store">Магазин</option>
+            <option value="supplier">Поставщик</option>
+          </select>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
-          Зарегистрироваться
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          >
+            Зарегистрироваться
+          </button>
+        </form>
 
-      <p className="mt-4 text-sm text-center">
-        Уже есть аккаунт? <a href="/login" className="text-blue-600 underline">Войти</a>
-      </p>
+        <p className="mt-4 text-sm text-center">
+          Уже есть аккаунт?{' '}
+          <a href="/login" className="text-blue-600 underline">
+            Войти
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
