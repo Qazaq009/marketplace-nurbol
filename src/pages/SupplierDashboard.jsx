@@ -1,27 +1,25 @@
-import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
 
-export default function SupplierDashboard() {
-  const navigate = useNavigate();
+export default function TestSupabase() {
+  const [message, setMessage] = useState('');
 
-  const handleLogout = () => {
-    navigate("/");
-  };
+  useEffect(() => {
+    const checkConnection = async () => {
+      const { data, error } = await supabase.from('profiles').select('*').limit(1);
+      if (error) {
+        setMessage('❌ Supabase connection failed: ' + error.message);
+      } else {
+        setMessage('✅ Supabase connected!');
+      }
+    };
+    checkConnection();
+  }, []);
 
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-50 text-center p-6">
-        <h1 className="text-4xl font-bold text-yellow-800 mb-4">👋 Добро пожаловать, Поставщик!</h1>
-        <p className="text-gray-600 text-lg mb-6">Здесь будет панель управления товарами.</p>
-
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded shadow"
-        >
-          Выйти
-        </button>
-      </div>
-    </>
+    <div className="text-center p-10">
+      <h1 className="text-2xl font-bold mb-4">Supabase Test</h1>
+      <p>{message}</p>
+    </div>
   );
 }

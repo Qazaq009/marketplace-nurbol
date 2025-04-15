@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
 import Main from "./pages/Main";
+import TestSupabase from "./pages/TestSupabase";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
       <Route path="/products" element={<Products />} />
       <Route path="/add-product" element={<AddProduct />} />
       <Route path="/main" element={<Main />} />
+      <Route path="/test" element={<TestSupabase />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -1,30 +1,31 @@
-// ✅ main.jsx — основная маршрутизация
-import React from "react";
-import ReactDOM from "react-dom/client";
 import {
-  BrowserRouter,
   Routes,
   Route,
-  useLocation,
   Navigate,
+  useLocation,
 } from "react-router-dom";
+import Navbar from "./components/Navbar";
 import Welcome from "./pages/Welcome";
 import MainPage from "./pages/Main";
 import ProductPage from "./pages/Products";
-import Dashboard from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import AddProduct from "./pages/AddProduct";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
-import Navbar from "./components/Navbar";
-import AddProduct from "./pages/AddProduct"; // 👈 обязательно импортируй
-import "./index.css";
+import TestSupabase from "./pages/TestSupabase";
 
 function ProtectedRoute({ children, role }) {
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-  const userRole = localStorage.getItem("userRole"); // 👈 мы это уже сохраняли при регистрации
+  const isAuthenticated = true;
+  const userRole = "supplier";
 
-  if (!isLoggedIn) return <Navigate to="/login" />;
-  if (role && userRole !== role) return <Navigate to="/main" />; // 👈 ограничение по роли
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role && userRole !== role) {
+    return <Navigate to="/not-found" replace />;
+  }
 
   return children;
 }
@@ -39,6 +40,7 @@ function Layout() {
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/main" element={<MainPage />} />
+        <Route path="/test" element={<TestSupabase />} />
         <Route
           path="/products"
           element={
@@ -71,10 +73,4 @@ function Layout() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
-  </React.StrictMode>
-);
+export default Layout;
