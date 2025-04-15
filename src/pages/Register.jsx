@@ -14,6 +14,8 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    setError('');
+
     if (!role) {
       setError('Пожалуйста, выберите роль');
       return;
@@ -51,6 +53,8 @@ export default function Register() {
         return;
       }
 
+      localStorage.setItem('loggedIn', 'true');
+      localStorage.setItem('userEmail', user.email);
       navigate(role === 'supplier' ? '/supplier-dashboard' : '/dashboard');
     }
   };
@@ -119,7 +123,7 @@ export default function Register() {
         </form>
 
         <p className="mt-4 text-sm text-center">
-          Уже есть аккаунт?{' '}
+          Уже есть аккаунт?{" "}
           <a href="/login" className="text-blue-600 underline">
             Войти
           </a>

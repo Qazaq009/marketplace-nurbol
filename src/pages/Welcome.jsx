@@ -7,7 +7,7 @@ export default function Welcome() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    navigate("/main");
+    navigate("/login");
   };
 
   return (

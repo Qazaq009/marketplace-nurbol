@@ -21,7 +21,6 @@ export default function Login() {
     } else {
       const user = data.user;
 
-      // 🔍 Получаем роль из таблицы profiles
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("role")
@@ -33,9 +32,11 @@ export default function Login() {
         return;
       }
 
-      // 💼 Переход в зависимости от роли
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("userEmail", user.email);
+
       if (profile.role === "store") {
-        navigate("/store-dashboard");
+        navigate("/dashboard");
       } else if (profile.role === "supplier") {
         navigate("/supplier-dashboard");
       } else {
@@ -60,7 +61,7 @@ export default function Login() {
             <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
             <input
               type="email"
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-xl px-4 py-2"
               placeholder="example@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -71,7 +72,7 @@ export default function Login() {
             <label className="block text-sm font-medium text-gray-600 mb-1">Пароль</label>
             <input
               type="password"
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-xl px-4 py-2"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -80,7 +81,7 @@ export default function Login() {
 
           <button
             onClick={handleLogin}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl transition duration-300"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl"
           >
             Войти
           </button>
