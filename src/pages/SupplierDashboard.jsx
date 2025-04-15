@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 
-export default function TestSupabase() {
+export default function SupplierDashboard() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function TestSupabase() {
 
   return (
     <div className="text-center p-10">
-      <h1 className="text-2xl font-bold mb-4">Supabase Test</h1>
+      <h1 className="text-2xl font-bold mb-4">Панель поставщика</h1>
       <p>{message}</p>
     </div>
   );
